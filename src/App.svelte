@@ -20,7 +20,8 @@
       imageUrl:
         "https://eventnook.s3.amazonaws.com/u/62366/coverimage_1508244245876_fe_dev_crashcourse_eventnook.png",
       address: "11th Nerd Road, 24432 New York",
-      contactEmail: "code@test.com"
+      contactEmail: "code@test.com",
+      isFavorite: false
     },
     {
       id: "m2",
@@ -30,7 +31,8 @@
       imageUrl:
         "https://himanshudixit.me/blog/sites/default/files/inline-images/Google-Summer-of-Code-March-3-2017-800x450%20%283%29_0_0.png",
       address: "11th Nerd Road, 24432 New York",
-      contactEmail: "swim@test.com"
+      contactEmail: "swim@test.com",
+      isFavorite: false
     }
   ];
 
@@ -46,6 +48,16 @@
     };
 
     meetups = [newMeetup, ...meetups];
+  }
+
+  function toggleFavorite(event) {
+    const id = event.detail;
+
+    meetups = meetups.map(m => {
+      if (m.id !== id) return m;
+
+      return { ...m, isFavorite: !m.isFavorite };
+    });
   }
 </script>
 
@@ -102,5 +114,5 @@
     <Button type="submit" caption="Save" />
   </form>
 
-  <MeetupGrid {meetups} />
+  <MeetupGrid {meetups} on:togglefavorite={toggleFavorite} />
 </main>
