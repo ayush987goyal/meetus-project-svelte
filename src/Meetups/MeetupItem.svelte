@@ -61,6 +61,10 @@
   div {
     text-align: right;
   }
+
+  .content {
+    height: 4rem;
+  }
 </style>
 
 <article>
