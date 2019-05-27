@@ -4,19 +4,29 @@
   import Modal from "../UI/Modal.svelte";
   import TextInput from "../UI/TextInput.svelte";
   import Button from "../UI/Button.svelte";
-  import { isEmpty } from "../helpers/validation.js";
+  import { isEmpty, isValidEmail } from "../helpers/validation.js";
 
   const dispatch = createEventDispatcher();
 
   let title = "";
   let titleValid = false;
   let subtitle = "";
+  let subtitleValid = false;
   let imageUrl = "";
+  let imageUrlValid = false;
   let email = "";
+  let emailValid = false;
   let address = "";
+  let addressValid = false;
   let description = "";
+  let descriptionValid = false;
 
   $: titleValid = !isEmpty(title);
+  $: subtitleValid = !isEmpty(subtitle);
+  $: imageUrlValid = !isEmpty(imageUrl);
+  $: emailValid = !isEmpty(email) && isValidEmail(email);
+  $: addressValid = !isEmpty(address);
+  $: descriptionValid = !isEmpty(description);
 
   function submitForm() {
     dispatch("save", {
@@ -52,28 +62,38 @@
     <TextInput
       id="subtitle"
       label="Subtitle"
+      valid={subtitleValid}
+      validityMessage="Please enter a valid subtitle."
       value={subtitle}
       on:input={event => (subtitle = event.target.value)} />
     <TextInput
       id="address"
       label="Address"
+      valid={addressValid}
+      validityMessage="Please enter a valid address."
       value={address}
       on:input={event => (address = event.target.value)} />
     <TextInput
       id="imageUrl"
       label="Image URL"
+      valid={imageUrlValid}
+      validityMessage="Please enter a valid image URL."
       value={imageUrl}
       on:input={event => (imageUrl = event.target.value)} />
     <TextInput
       id="email"
       label="E-Mail"
       type="email"
+      valid={emailValid}
+      validityMessage="Please enter a valid email."
       value={email}
       on:input={event => (email = event.target.value)} />
     <TextInput
       controlType="textarea"
       rows="3"
       id="description"
+      valid={descriptionValid}
+      validityMessage="Please enter a valid description."
       label="Description"
       value={description}
       on:input={event => (description = event.target.value)} />
