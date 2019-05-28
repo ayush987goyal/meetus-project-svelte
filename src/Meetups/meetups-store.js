@@ -38,6 +38,16 @@ const customMeetupStore = {
     meetups.update(items => [newMeetup, ...items]);
   },
 
+  updateMeetup: (id, meetupData) => {
+    meetups.update(items =>
+      items.map(m => {
+        if (m.id !== id) return m;
+
+        return { ...m, ...meetupData };
+      })
+    );
+  },
+
   toggleFavorite: id => {
     meetups.update(items =>
       items.map(m => {
