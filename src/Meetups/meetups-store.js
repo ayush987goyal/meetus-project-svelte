@@ -48,6 +48,10 @@ const customMeetupStore = {
     );
   },
 
+  deleteMeetup: id => {
+    meetups.update(items => items.filter(m => m.id !== id));
+  },
+
   toggleFavorite: id => {
     meetups.update(items =>
       items.map(m => {
