@@ -25,4 +25,28 @@ const meetups = writable([
   }
 ]);
 
-export default meetups;
+const customMeetupStore = {
+  subscribe: meetups.subscribe,
+
+  addMeetup: meetupData => {
+    const newMeetup = {
+      ...meetupData,
+      id: Math.random().toString(),
+      isFavorite: false
+    };
+
+    meetups.update(items => [newMeetup, ...items]);
+  },
+
+  toggleFavorite: id => {
+    meetups.update(items =>
+      items.map(m => {
+        if (m.id !== id) return m;
+
+        return { ...m, isFavorite: !m.isFavorite };
+      })
+    );
+  }
+};
+
+export default customMeetupStore;

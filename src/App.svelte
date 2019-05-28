@@ -8,8 +8,7 @@
   let editMode;
 
   function addMeetup(event) {
-    const newMeetup = {
-      id: Math.random().toString(),
+    const meetupData = {
       title: event.detail.title,
       subtitle: event.detail.subtitle,
       description: event.detail.description,
@@ -18,7 +17,7 @@
       contactEmail: event.detail.email
     };
 
-    // meetups = [newMeetup, ...meetups];
+    meetups.addMeetup(meetupData);
     editMode = null;
   }
 
@@ -28,12 +27,7 @@
 
   function toggleFavorite(event) {
     const id = event.detail;
-
-    // meetups = meetups.map(m => {
-    //   if (m.id !== id) return m;
-
-    //   return { ...m, isFavorite: !m.isFavorite };
-    // });
+    meetups.toggleFavorite(id);
   }
 </script>
 
