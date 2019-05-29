@@ -59,7 +59,19 @@
     };
 
     if (id) {
-      meetups.updateMeetup(id, meetupData);
+      fetch(`${API_URL}/meetups/${id}.json`, {
+        method: "PATCH",
+        body: JSON.stringify(meetupData),
+        headers: { "Content-Type": "application/json" }
+      })
+        .then(res => {
+          if (!res.ok) throw "An error occured!";
+
+          meetups.updateMeetup(id, meetupData);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     } else {
       fetch(`${API_URL}/meetups.json`, {
         method: "POST",
