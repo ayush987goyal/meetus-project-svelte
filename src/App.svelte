@@ -28,7 +28,7 @@
         loadedMeetups.push({ ...data[key], id: key });
       }
 
-      meetups.setMeetups(loadedMeetups);
+      meetups.setMeetups(loadedMeetups.reverse());
     })
     .catch(err => {
       isLoading = false;

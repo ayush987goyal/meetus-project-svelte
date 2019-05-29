@@ -99,8 +99,18 @@
   }
 
   function deleteMeetup() {
-    meetups.deleteMeetup(id);
-    dispatch("save");
+    fetch(`${API_URL}/meetups/${id}.json`, {
+      method: "DELETE"
+    })
+      .then(res => {
+        if (!res.ok) throw "An error occured!";
+
+        meetups.deleteMeetup(id);
+        dispatch("save");
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   function onCancel() {

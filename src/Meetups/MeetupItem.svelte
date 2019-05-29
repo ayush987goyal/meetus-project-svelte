@@ -4,6 +4,7 @@
   import meetups from "./meetups-store.js";
   import Button from "../UI/Button.svelte";
   import Badge from "../UI/Badge.svelte";
+  import { API_URL } from "../config.js";
 
   export let id;
   export let title;
@@ -17,7 +18,19 @@
   const dispatch = createEventDispatcher();
 
   function toggleFavorite() {
-    meetups.toggleFavorite(id);
+    fetch(`${API_URL}/meetups/${id}.json`, {
+      method: "PATCH",
+      body: JSON.stringify({ isFavorite: !isFav }),
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(res => {
+        if (!res.ok) throw "An error occured!";
+
+        meetups.toggleFavorite(id);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 </script>
 
