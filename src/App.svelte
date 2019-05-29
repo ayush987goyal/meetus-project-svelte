@@ -5,11 +5,30 @@
   import MeetupGrid from "./Meetups/MeetupGrid.svelte";
   import EditMeetup from "./Meetups/EditMeetup.svelte";
   import MeetupDetail from "./Meetups/MeetupDetail.svelte";
+  import { API_URL } from "./config.js";
 
   let editMode;
   let editedId;
   let page = "overview";
   let pageData = {};
+
+  fetch(`${API_URL}/meetups.json`)
+    .then(res => {
+      if (!res.ok) throw "An error occured!";
+
+      return res.json();
+    })
+    .then(data => {
+      const loadedMeetups = [];
+      for (let key in data) {
+        loadedMeetups.push({ ...data[key], id: key });
+      }
+
+      meetups.setMeetups(loadedMeetups);
+    })
+    .catch(err => {
+      console.log(err);
+    });
 
   function saveMeetup() {
     editMode = null;
