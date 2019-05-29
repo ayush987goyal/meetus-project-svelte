@@ -15,9 +15,13 @@
   export let email;
   export let isFav;
 
+  let isLoading = false;
+
   const dispatch = createEventDispatcher();
 
   function toggleFavorite() {
+    isLoading = true;
+
     fetch(`${API_URL}/meetups/${id}.json`, {
       method: "PATCH",
       body: JSON.stringify({ isFavorite: !isFav }),
@@ -26,9 +30,11 @@
       .then(res => {
         if (!res.ok) throw "An error occured!";
 
+        isLoading = false;
         meetups.toggleFavorite(id);
       })
       .catch(err => {
+        isLoading = false;
         console.log(err);
       });
   }
@@ -115,13 +121,19 @@
     <Button type="button" mode="outline" on:click={() => dispatch('edit', id)}>
       Edit
     </Button>
-    <Button
-      mode="outline"
-      color={isFav ? null : 'success'}
-      type="button"
-      on:click={toggleFavorite}>
-       {isFav ? 'Unfavorite' : 'Favorite'}
-    </Button>
+
+    {#if isLoading}
+      <span>Changing...</span>
+    {:else}
+      <Button
+        mode="outline"
+        color={isFav ? null : 'success'}
+        type="button"
+        on:click={toggleFavorite}>
+         {isFav ? 'Unfavorite' : 'Favorite'}
+      </Button>
+    {/if}
+
     <Button type="button" on:click={() => dispatch('showdetails', id)}>
       Show Details
     </Button>
