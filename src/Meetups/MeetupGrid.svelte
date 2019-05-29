@@ -34,6 +34,10 @@
     justify-content: space-between;
   }
 
+  .no-meetups {
+    margin: 1rem;
+  }
+
   @media (min-width: 768px) {
     .meetups {
       grid-template-columns: repeat(2, 1fr);
@@ -46,20 +50,24 @@
   <Button on:click={() => dispatch('add')}>New Meetup</Button>
 </section>
 
-<section class="meetups">
-  {#each filteredMeetups as meetup (meetup.id)}
-    <div transition:scale animate:flip={{ duration: 300 }}>
-      <MeetupItem
-        id={meetup.id}
-        title={meetup.title}
-        subtitle={meetup.subtitle}
-        imageUrl={meetup.imageUrl}
-        description={meetup.description}
-        address={meetup.address}
-        email={meetup.contactEmail}
-        isFav={meetup.isFavorite}
-        on:showdetails
-        on:edit />
-    </div>
-  {/each}
-</section>
+{#if filteredMeetups.length === 0}
+  <p class="no-meetups">No meetups found, you can start adding some.</p>
+{:else}
+  <section class="meetups">
+    {#each filteredMeetups as meetup (meetup.id)}
+      <div transition:scale animate:flip={{ duration: 300 }}>
+        <MeetupItem
+          id={meetup.id}
+          title={meetup.title}
+          subtitle={meetup.subtitle}
+          imageUrl={meetup.imageUrl}
+          description={meetup.description}
+          address={meetup.address}
+          email={meetup.contactEmail}
+          isFav={meetup.isFavorite}
+          on:showdetails
+          on:edit />
+      </div>
+    {/each}
+  </section>
+{/if}
