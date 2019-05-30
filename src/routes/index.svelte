@@ -1,34 +1,28 @@
 <script context="module">
   import { API_URL } from "../config.js";
 
-  export function preload(page) {
-    return this.fetch(`${API_URL}/meetups.json`)
-      .then(res => {
-        if (!res.ok) throw "An error occured!";
+  export async function preload(page) {
+    try {
+      const res = await this.fetch(`${API_URL}/meetups.json`);
+      if (!res.ok) throw "An error occured!";
 
-        return res.json();
-      })
-      .then(data => {
-        isLoading = false;
-        const loadedMeetups = [];
-        for (let key in data) {
-          loadedMeetups.push({ ...data[key], id: key });
-        }
+      const data = await res.json();
 
-        return { fetchedMeetups: loadedMeetups.reverse() };
-        // meetups.setMeetups(loadedMeetups.reverse());
-      })
-      .catch(err => {
-        error = err;
-        isLoading = false;
-        console.log(err);
-        this.error(500, "Could not fetch meetups!");
-      });
+      const loadedMeetups = [];
+      for (let key in data) {
+        loadedMeetups.push({ ...data[key], id: key });
+      }
+
+      return { fetchedMeetups: loadedMeetups.reverse() };
+    } catch (err) {
+      console.log(err);
+      this.error(500, "Could not fetch meetups!");
+    }
   }
 </script>
 
 <script>
-  import { createEventDispatcher, onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { scale } from "svelte/transition";
   import { flip } from "svelte/animate";
 
@@ -37,24 +31,28 @@
   import EditMeetup from "../components/Meetup/EditMeetup.svelte";
   import LoadingSpinner from "../components/UI/LoadingSpinner.svelte";
   import Button from "../components/UI/Button.svelte";
-  import meetups from "../meetups-store.js";
-
-  const dispatch = createEventDispatcher();
+  import meetupStore from "../meetups-store.js";
 
   export let fetchedMeetups;
 
+  let meetups = [];
   let favsOnly = false;
   let editMode;
   let editedId;
   let isLoading = false;
+  let unsubscribe;
 
-  $: filteredMeetups = favsOnly
-    ? fetchedMeetups.filter(m => m.isFavorite)
-    : fetchedMeetups;
+  $: filteredMeetups = favsOnly ? meetups.filter(m => m.isFavorite) : meetups;
 
   onMount(() => {
-    meetups.setMeetups(fetchedMeetups);
+    console.log("mount", fetchedMeetups);
+    unsubscribe = meetupStore.subscribe(items => {
+      meetups = items;
+    });
+    meetupStore.setMeetups(fetchedMeetups);
   });
+
+  onDestroy(unsubscribe);
 
   function setFilter(event) {
     favsOnly = event.detail === 1;
@@ -73,6 +71,10 @@
   function startEdit(event) {
     editMode = "edit";
     editedId = event.detail;
+  }
+
+  function startAdd() {
+    editMode = "edit";
   }
 </script>
 
@@ -114,7 +116,7 @@
 {:else}
   <section class="meetup-controls">
     <MeetupFilter on:select={setFilter} />
-    <Button on:click={() => dispatch('add')}>New Meetup</Button>
+    <Button on:click={startAdd}>New Meetup</Button>
   </section>
 
   {#if filteredMeetups.length === 0}
@@ -132,8 +134,7 @@
             address={meetup.address}
             email={meetup.contactEmail}
             isFav={meetup.isFavorite}
-            on:showdetails
-            on:edit />
+            on:edit={startEdit} />
         </div>
       {/each}
     </section>
